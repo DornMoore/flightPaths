@@ -1,19 +1,32 @@
 import math
 from geojson import LineString
 
+def calc_dist(lat1,lon1,lat2,lon2):
+        """Calculate the distance between two coordinates using great circle calculation."""
+        #Convert the coordinates to radians (make sure it knows the inputs are float)
+        lat1=math.radians(float(lat1))
+        lat2=math.radians(float(lat2))
+        lon1=math.radians(float(lon1))
+        lon2=math.radians(float(lon2))
+        
+        # Great circle distance in radians
+        d = math.acos(math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2))
 
-def createPaths(latitude1, longitude1, latitude2, longitude2,num_of_segments):
+        # Multiply radians by 6300km to get distance in km
+        dist = 6371 * d
+        
+        return dist
+
+def createPaths(latitude1, longitude1, latitude2, longitude2):
         ptlon1 = longitude1
         ptlat1 = latitude1
         ptlon2 = longitude2
         ptlat2 = latitude2
 
-        #ptlon1 = -89.3375045
-        #ptlat1 = 43.1398791
-        # ptlon2 = -89.3375045
-        # ptlat2 = 43.1398791
+        # Dynamically set the segments based on one each degree
+        numberofsegments= int(calc_dist(ptlat1,ptlon1,ptlat2,ptlon2)/111.3)
 
-        numberofsegments = num_of_segments
+        #numberofsegments = num_of_segments
         onelessthansegments = numberofsegments - 1
         fractionalincrement = (1.0/onelessthansegments)
 
@@ -92,4 +105,4 @@ def createPaths(latitude1, longitude1, latitude2, longitude2,num_of_segments):
         out.close
         json_out.close
 
-createPaths(43.1398791,-89.3375045, -43.1398791,89.3375045,50)
+createPaths(43.1398791,-89.3375045, -43.1398791, 89.3375045)
